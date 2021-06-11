@@ -1,0 +1,50 @@
+name: Deploy to EC2
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+  build:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@main
+
+    - name: create env file
+      run: |
+        mkdir envs
+        touch .env
+        echo "${{ secrets.ENV }}" >> envs/.env
+        touch .env.prod
+        echo "${{ secrets.ENV_PROD }}" >> envs/.env.prod
+        touch .env.prod.proxy-companion
+        echo "${{ secrets.ENV_PROXY }}" >> envs/.env.prod.proxy-companion
+
+    - name: create remote directory
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: mkdir -p /home/ubuntu/srv
+
+    - name: copy source via ssh key
+      uses: burnett01/rsync-deployments@4.1
+      with:
+        switches: -avzr --delete
+        remote_path: /home/ubuntu/srv
+        remote_host: ${{ secrets.HOST }}
+        remote_user: ${{ secrets.USERNAME }}
+        remote_key: ${{ secrets.KEY }}
+
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        script: |
+          sh /home/ubuntu/srv/config/scripts/deploy.sh
