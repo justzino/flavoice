@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+
+  web:
+    container_name: web_local
+    build:
+      context: .
+      dockerfile: local.Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    env_file:
+      - envs/.env.dev
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  db:
+    container_name: postgres_local
+    image: postgres:12.0-alpine
+    env_file:
+      - envs/.env.dev.db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
