@@ -6,7 +6,14 @@
 </p>
 
 > FLAVOICE
-## Author
+
+## Project Architecture
+![project-flow](./images/project-flow.jpg)
+
+## CI/CD
+![CI/CD flow](./images/CICD-flow.jpg)
+
+## Team
 
 👤 **B411161 이진호**
 👤 **B611061 문상진**
