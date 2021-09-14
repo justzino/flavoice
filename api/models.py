@@ -1,5 +1,14 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
+
+
+def validate_phone_number(value):
+    if len(value) != 11:
+        raise ValidationError('전화번호는 11자리 입니다')
+
+    if value.startswith('010'):
+        raise ValidationError('010으로 시작하는 번호를 적어주세요')
 
 
 class User(AbstractUser):
@@ -8,7 +17,7 @@ class User(AbstractUser):
 
     username = models.CharField(max_length=64, blank=True)
     birthday = models.DateField(blank=True, null=True)
-    phone_number = models.CharField(verbose_name="휴대폰 번호", max_length=11, unique=True)
+    phone_number = models.CharField(verbose_name="휴대폰 번호", max_length=11, unique=True, validators=[validate_phone_number])
 
     USERNAME_FIELD = "phone_number"  # 로그인 phone_number 로
     REQUIRED_FIELDS = ["username", "birthday"]
