@@ -28,25 +28,6 @@ class TimeStampedModel(models.Model):
         abstract = True
 
 
-class Song(TimeStampedModel):
-
-    """ Song Model """
-
-    # 음역대
-    PITCH_CHOICES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-
-    title = models.CharField(max_length=200, blank=False, null=False)
-    max_pitch = models.CharField(choices=PITCH_CHOICES, max_length=2, blank=False, null=False)
-    min_pitch = models.CharField(choices=PITCH_CHOICES, max_length=2, blank=False, null=False)
-    file = models.FileField(upload_to="songs", on_delete=models.SET_NULL, null=True)
-    singer = models.ForeignKey('Singer', on_delete=models.SET_NULL, null=True)
-    Genre = models.ManyToManyField('Genre', help_text='Select a genre for this song')
-
-    def __str__(self):
-        """String for representing the Model object."""
-        return self.title
-
-
 class Voice(TimeStampedModel):
 
     """ Voice Model """
@@ -57,6 +38,24 @@ class Voice(TimeStampedModel):
     max_pitch = models.CharField(choices=PITCH_CHOICES, max_length=2, blank=False, null=False)
     min_pitch = models.CharField(choices=PITCH_CHOICES, max_length=2, blank=False, null=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='songs')
+
+
+class Song(TimeStampedModel):
+
+    """ Song Model """
+
+    # 음역대
+    PITCH_CHOICES = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+
+    title = models.CharField(max_length=200, blank=False, null=False)
+    max_pitch = models.CharField(choices=PITCH_CHOICES, max_length=2, blank=False, null=False)
+    min_pitch = models.CharField(choices=PITCH_CHOICES, max_length=2, blank=False, null=False)
+    singer = models.ForeignKey('Singer', on_delete=models.SET_NULL, null=True)
+    genre = models.ManyToManyField('Genre', help_text='Select a genre for this song')
+
+    def __str__(self):
+        """String for representing the Model object."""
+        return self.title
 
 
 class Genre(TimeStampedModel):
@@ -81,4 +80,3 @@ class Singer(models.Model):
     def __str__(self):
         """String for representing the Model object."""
         return self.kor_name
-
