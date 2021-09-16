@@ -21,5 +21,7 @@ VERSION = 'v1'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(f"api/{VERSION}/", include("api.urls")),
+    path(f'api/{VERSION}/', include("api.urls")),
+    # User
+    path('accounts/', include('accounts.urls')),
 ]
