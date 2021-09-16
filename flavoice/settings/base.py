@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -29,6 +30,10 @@ environ.Env.read_env(os.path.join(BASE_DIR, "envs/.env"))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
 
+# Kakao API
+KAKAO_REST_API_KEY = env('KAKAO_REST_API_KEY')
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -44,14 +49,29 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 ]
 
 PROJECT_APPS = [
-    "api.apps.ApiConfig"
+    'api.apps.ApiConfig',
+    'accounts.apps.AccountsConfig',
 ]
 
 THIRD_PARTY_APPS = [
-    "rest_framework",
+    'rest_framework',
+    'rest_framework.authtoken',
+    # django-allauth
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.kakao',
+    'allauth.socialaccount.providers.google',
+    # dj-rest-auth
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    # simple-jwt
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS + THIRD_PARTY_APPS
@@ -130,19 +150,49 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
-# Auth
-
-AUTH_USER_MODEL = "api.User"
-
 # Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'api.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
 }
+
+# Auth
+AUTH_USER_MODEL = "accounts.User"
+
+# django-allauth Configuration: User 필드 설정
+# https://wikidocs.net/9942
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None    # username 필드 사용 x
+ACCOUNT_USERNAME_REQUIRED = False           # username 필드 사용 x
+ACCOUNT_AUTHENTICATION_METHOD = 'email'     # 로그인 인증방법 email 로
+ACCOUNT_EMAIL_REQUIRED = True               # 로그인 인증 email 로 사용하면 True 로 해줘야 함
+
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'    # 이메일 유효성 인증
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/?verification=1'
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
+
+SITE_ID = 1
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'accounts.serializers.UserSerializer',
+}
+
+# JWT 설정
+REST_USE_JWT = True
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+
 
 # 베포시 BrowsableAPIRenderer 는 사용 안함
 if not DEBUG:
