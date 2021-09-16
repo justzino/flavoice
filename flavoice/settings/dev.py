@@ -28,8 +28,12 @@ THIRD_PARTY_APPS += [
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default" : {
+      "ENGINE": "django.db.backends.mysql",
+      "NAME": "flavoice",
+      "USER": "root",              # 유저 생성 후 해당 유저로 접속 가능 (참조 블로그)
+      "PASSWORD": "wls9256",
+      "HOST": "localhost",
+      "PORT": "3306"               # MYSQL 기본 포트 (따로 설정 안 했을 시)
     }
 }
