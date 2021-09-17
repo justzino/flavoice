@@ -97,7 +97,8 @@ def kakao_callback(request):
     Access Token이 틀렸거나, 에러 발생으로 200 OK 코드를 응답받지 못하면 400으로 Response
     """
     profile_request = requests.get(
-        "https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"})
+        "https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"}
+    )
     profile_json = profile_request.json()
     error = profile_json.get("error")
     if error is not None:
@@ -116,10 +117,10 @@ def kakao_callback(request):
     """
     1. 전달받은 email과 동일한 Email이 있는지 찾아본다.
     2-1. 만약 있다면?
-           - FK로 연결되어있는 socialaccount 테이블에서 이메일의 유저가 있는지 체크
+           - FK로 연결되어있는 social account 테이블에서 이메일의 유저가 있는지 체크
            - 없으면 일반 계정이므로, 에러 메세지와 함께 400 리턴
            - 있지만 다른 Provider로 가입되어 있으면 에러 메세지와 함께 400 리턴
-           - 위 두개에 걸리지 않으면 로그인 진행, 해당 유저의 JWT 발급, 그러나 도중에          
+           - 위 두개에 걸리지 않으면 로그인 진행, 해당 유저의 JWT 발급, 그러나 도중에
              예기치 못한 오류가 발생하면 에러 메세지와 함께 오류 Status 응답
     2-2. 없다면 (신규 유저이면)
            - 회원가입 진행 및 해당 유저의 JWT 발급
@@ -132,9 +133,13 @@ def kakao_callback(request):
         # 다른 SNS로 가입된 유저
         social_user = SocialAccount.objects.get(user=user)
         if social_user is None:
-            return JsonResponse({'err_msg': 'email exists but not social user'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(
+                {'err_msg': 'email exists but not social user'}, status=status.HTTP_400_BAD_REQUEST
+            )
         if social_user.provider != 'kakao':
-            return JsonResponse({'err_msg': 'no matching social type'}, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(
+                {'err_msg': 'no matching social type'}, status=status.HTTP_400_BAD_REQUEST
+            )
 
         # 기존에 Kakao로 가입된 유저
         data = {'access_token': access_token, 'code': code}
