@@ -7,6 +7,8 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 THIRD_PARTY_APPS += [
 ]
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # Database ------------------------------------------------------------------------
 DATABASES = {
     "default": {
