@@ -53,7 +53,7 @@ RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 
 # install Pillow dependencies
-RUN pip install --upgrade pip
+RUN sudo pip install --upgrade pip
 RUN apk update \
     && apk add --no-cache postgresql-dev gcc python3-dev musl-dev \
     && apk add --no-cache jpeg-dev zlib-dev \
@@ -61,16 +61,15 @@ RUN apk update \
     && apk add --no-cache --virtual .build-deps build-base linux-headers
 
 # install dependencies
-RUN pip install --upgrade pip
 RUN apk update && apk add libpq
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/prod.requirements.txt .
 RUN pip install --no-cache /wheels/*
 
 # copy entrypoint-prod.sh
-COPY ./config/docker/entrypoint.local.sh ./config/docker/
-RUN sed -i 's/\r$//g' $APP_HOME/config/docker/entrypoint.prod.sh
-RUN chmod +x $APP_HOME/config/docker/entrypoint.prod.sh
+#COPY ./config/docker/entrypoint.local.sh ./config/docker/
+#RUN sed -i 's/\r$//g' $APP_HOME/config/docker/entrypoint.prod.sh
+#RUN chmod +x $APP_HOME/config/docker/entrypoint.prod.sh
 
 # copy project
 COPY . $APP_HOME
