@@ -1,6 +1,17 @@
 # Core
+pytz==2020.5
 Django==3.1.5
+gunicorn==20.0.4
 django-environ==0.4.5
+
+# For the persistence stores
+psycopg2-binary==2.8.6
 
 # Rest apis
 djangorestframework==3.12.4
+djangorestframework-simplejwt==4.8.0
+dj-rest-auth==2.1.11
+django-allauth==0.45.0
+Pillow==8.1.0
+django-seed==0.2.2
+requests==2.25.1
