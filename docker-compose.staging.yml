@@ -1,13 +1,13 @@
-version: '3.7'
+version: '3.8'
 
 services:
 
   web:
     container_name: web_flavoice
     build:
-      context: ""
-      dockerfile: flavoice/prod.Dockerfile
-    image: django-ec2:web
+      context: .
+      dockerfile: prod.Dockerfile
+    image: 516199006501.dkr.ecr.ap-northeast-2.amazonaws.com/flavoice:web
     command: gunicorn flavoice.wsgi:application --bind 0.0.0.0:8000
     env_file:
       - envs/.env.staging
@@ -16,14 +16,11 @@ services:
       - media_volume:/home/app/web/media
     expose:
       - 8000
-    entrypoint:
-      - sh
-      - config/docker/entrypoint.prod.sh
 
   nginx-proxy:
     container_name: nginx-proxy
     build: config/nginx
-    image: django-ec2:nginx-proxy
+    image: 516199006501.dkr.ecr.ap-northeast-2.amazonaws.com/flavoice:nginx-proxy
     restart: always
     ports:
       - 443:443
