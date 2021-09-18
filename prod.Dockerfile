@@ -6,7 +6,7 @@
 FROM python:3.8.3-alpine as builder
 
 # set work directory
-#RUN mkdir /usr/src/app
+RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
 # set environment variables
