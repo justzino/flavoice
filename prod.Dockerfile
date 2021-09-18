@@ -19,7 +19,7 @@ RUN apk update \
     # install Pillow dependencies
     && apk add jpeg-dev zlib-dev libjpeg \
     # install Cryptography dependencies
-    && apk add libressl-dev musl-dev libffi-dev openssl-dev cargo
+    && apk add libressl-dev libffi-dev openssl-dev cargo
 
 # lint
 RUN pip install --upgrade pip
@@ -54,7 +54,9 @@ WORKDIR $APP_HOME
 
 # install Pillow dependencies
 RUN apk update \
+    && apk add --no-cache postgresql-dev gcc python3-dev musl-dev \
     && apk add --no-cache jpeg-dev zlib-dev \
+    && apk add --no-cache libressl-dev libffi-dev openssl-dev cargo\
     && apk add --no-cache --virtual .build-deps build-base linux-headers
 
 # install dependencies
@@ -65,8 +67,8 @@ RUN pip install --no-cache /wheels/*
 
 # copy entrypoint-prod.sh
 COPY ./config/docker/entrypoint.local.sh ./config/docker/
-RUN sed -i 's/\r$//g' $APP_HOME/config/docker/entrypoint.local.sh
-RUN chmod +x $APP_HOME/config/docker/entrypoint.local.sh
+RUN sed -i 's/\r$//g' $APP_HOME/config/docker/entrypoint.prod.sh
+RUN chmod +x $APP_HOME/config/docker/entrypoint.prod.sh
 
 # copy project
 COPY . $APP_HOME
