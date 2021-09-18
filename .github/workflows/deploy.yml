@@ -29,13 +29,13 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
-        script: mkdir -p /home/ubuntu/srv
+        script: mkdir -p /home/ubuntu/flavoice
 
     - name: copy source via ssh key
       uses: burnett01/rsync-deployments@4.1
       with:
         switches: -avzr --delete
-        remote_path: /home/ubuntu/srv
+        remote_path: /home/ubuntu/flavoice
         remote_host: ${{ secrets.HOST }}
         remote_user: ${{ secrets.USERNAME }}
         remote_key: ${{ secrets.KEY }}
@@ -47,4 +47,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         script: |
-          sh /home/ubuntu/srv/config/scripts/deploy.sh
+          sh /home/ubuntu/flavoice/config/scripts/deploy.sh

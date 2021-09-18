@@ -17,7 +17,9 @@ ENV PYTHONUNBUFFERED 1
 RUN apk update \
     && apk add postgresql-dev gcc python3-dev musl-dev \
     # install Pillow dependencies
-    && apk add jpeg-dev zlib-dev libjpeg
+    && apk add jpeg-dev zlib-dev libjpeg \
+    # install Cryptography dependencies
+    && apk add libressl-dev musl-dev libffi-dev openssl-dev cargo
 
 # lint
 RUN pip install --upgrade pip
@@ -25,7 +27,7 @@ RUN pip install flake8
 COPY . .
 
 # install dependencies
-COPY prod.requirements.txt .
+COPY ./prod.requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r prod.requirements.txt
 
 
@@ -62,7 +64,9 @@ COPY --from=builder /usr/src/app/prod.requirements.txt .
 RUN pip install --no-cache /wheels/*
 
 # copy entrypoint-prod.sh
-#COPY docker/entrypoint.prod.sh $APP_HOME
+COPY ./config/docker/entrypoint.local.sh ./config/docker/
+RUN sed -i 's/\r$//g' $APP_HOME/config/docker/entrypoint.local.sh
+RUN chmod +x $APP_HOME/config/docker/entrypoint.local.sh
 
 # copy project
 COPY . $APP_HOME
