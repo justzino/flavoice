@@ -6,7 +6,7 @@
 FROM python:3.8.3-alpine as builder
 
 # set work directory
-#RUN mkdir /usr/src/app
+RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
 # set environment variables
@@ -53,7 +53,6 @@ RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 
 # install Pillow dependencies
-RUN sudo pip install --upgrade pip
 RUN apk update \
     && apk add --no-cache postgresql-dev gcc python3-dev musl-dev \
     && apk add --no-cache jpeg-dev zlib-dev \

@@ -40,11 +40,11 @@ fi
 echo "docker-compose up"
 sudo docker-compose -f /home/ubuntu/flavoice/docker-compose.prod.yml up --build -d
 
-echo "Login to the ECR repository"
-sudo aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 516199006501.dkr.ecr.ap-northeast-2.amazonaws.com
-
-echo "Push the images to ECR"
-sudo docker-compose -f /home/ubuntu/flavoice/docker-compose.prod.yml push
+#echo "Login to the ECR repository"
+#sudo aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 516199006501.dkr.ecr.ap-northeast-2.amazonaws.com
+#
+#echo "Push the images to ECR"
+#sudo docker-compose -f /home/ubuntu/flavoice/docker-compose.prod.yml push
 #
 #echo "Pull the images from ECR"
 #sudo docker pull 516199006501.dkr.ecr.ap-northeast-2.amazonaws.com/flavoice:web
