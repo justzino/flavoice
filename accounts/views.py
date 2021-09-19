@@ -20,7 +20,7 @@ from .permissions import IsSelf
 from .serializers import UserSerializer
 
 
-BASE_URL = 'https://flavoice.shop:8000/'
+BASE_URL = 'https://flavoice.shop/'
 KAKAO_CALLBACK_URI = BASE_URL + 'accounts/kakao/callback/'
 KAKAO_REST_API_KEY = settings.KAKAO_REST_API_KEY
 
