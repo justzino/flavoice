@@ -60,6 +60,7 @@ RUN apk update \
     && apk add --no-cache --virtual .build-deps build-base linux-headers
 
 # install dependencies
+RUN pip install --upgrade pip
 RUN apk update && apk add libpq
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/prod.requirements.txt .
