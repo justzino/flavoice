@@ -60,6 +60,7 @@ PROJECT_APPS = [
 THIRD_PARTY_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_yasg',
     # django-allauth
     'allauth',
     'allauth.account',
