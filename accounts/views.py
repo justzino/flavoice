@@ -65,14 +65,12 @@ def kakao_login(request):
     그러면 구글 로그인 창이 뜨고, 알맞은 아이디, 비밀번호로 진행하면 Callback URI로 Code값이 들어가게 된다.
     """
 
-    rest_api_key = 'dc9d60c4b4af4bfa3227b496d0d5cb50'
     return redirect(
         f"https://kauth.kakao.com/oauth/authorize?client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code"
     )
 
 
 def kakao_callback(request):
-    rest_api_key = 'dc9d60c4b4af4bfa3227b496d0d5cb50'
     code = request.GET.get("code")
     redirect_uri = KAKAO_CALLBACK_URI
 
