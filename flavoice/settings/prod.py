@@ -7,6 +7,8 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
 THIRD_PARTY_APPS += [
 ]
 
+# dj-rest-auth 설정: 회원가입 이후 이동할 URL
+LOGIN_URL = 'https://flavoice.shop/accounts/login'
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Database ------------------------------------------------------------------------

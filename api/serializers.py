@@ -1,12 +1,9 @@
 from rest_framework import serializers
 
-from accounts.serializers import UserSerializer
 from .models import Voice, File, Song, Genre, Singer
 
 
 class VoiceSerializer(serializers.ModelSerializer):
-
-    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Voice
@@ -22,8 +19,6 @@ class VoiceSerializer(serializers.ModelSerializer):
 
 # File upload 를 위한 serializer
 class FileSerializer(serializers.ModelSerializer):
-
-    user = UserSerializer(read_only=True)
 
     class Meta:
         model = File

@@ -11,6 +11,8 @@ ALLOWED_HOSTS += env.list("DJANGO_ALLOWED_HOSTS")
 THIRD_PARTY_APPS += [
 ]
 
+# dj-rest-auth 설정: 회원가입 이후 이동할 URL
+LOGIN_URL = 'localhost:8000/accounts/login'
 # Database ------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 # DATABASES = {
