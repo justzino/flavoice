@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView
 from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
@@ -41,6 +42,8 @@ urlpatterns = [
 
     # User
     # 이메일 관련 필요
+    path('accounts/account-confirm-email/<str:key>/', ConfirmEmailView.as_view()), # Needs to be defined before the registration path
+    path('accounts/account-confirm-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),
     path('accounts/', include('dj_rest_auth.urls')),  # Login, Logout, password 관련 기능
     path('accounts/', include('dj_rest_auth.registration.urls')),  # SingUp 기능
 

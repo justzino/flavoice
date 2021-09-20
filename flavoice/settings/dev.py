@@ -13,6 +13,16 @@ THIRD_PARTY_APPS += [
 
 # dj-rest-auth 설정: 회원가입 이후 이동할 URL
 LOGIN_URL = 'localhost:8000/accounts/login'
+
+# Email backend: SMTP 세팅
+EMAIL_BACKEND = env('EMAIL_BACKEND')
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+
+
 # Database ------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 # DATABASES = {
