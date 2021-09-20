@@ -16,3 +16,4 @@ django-allauth==0.45.0
 Pillow==8.1.0
 requests==2.25.1
 drf_yasg
+django-cors-headers
