@@ -1,12 +1,10 @@
 from django.urls import path, include
 from rest_framework import routers
 
-from .views import UserViewSet
 from .views import kakao_login, kakao_callback, KakaoLogin
 
 
 router = routers.DefaultRouter()
-router.register('users', UserViewSet)
 
 # Wire up our API using automatic URL routing.
 urlpatterns = [

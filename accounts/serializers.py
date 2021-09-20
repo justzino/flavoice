@@ -1,27 +1,34 @@
+from dj_rest_auth.registration.serializers import RegisterSerializer
+from django.db import transaction
 from rest_framework import serializers
 
-from .models import User
+from accounts.models import CustomUser
+from accounts.models import GENDER_SELECTION
 
 
-class UserSerializer(serializers.ModelSerializer):
-    # password 를 serializer 로 보여주는 것 방지
-    password = serializers.CharField(write_only=True)
+class CustomRegisterSerializer(RegisterSerializer):
+    phone_number = serializers.CharField(max_length=11)
+    birthday = serializers.DateField()
+    gender = serializers.ChoiceField(choices=GENDER_SELECTION)
 
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "email",
-            "phone_number",
-            "birthday",
-            "password",  # password 입력 받기 위해
-        )
-
-        read_only_fields = ['id']
-
-    def create(self, validated_data):
-        password = validated_data.get("password")
-        user = super().create(validated_data)
-        user.set_password(password)
+    # Define transaction.atomic to rollback the save operation in case of error
+    @transaction.atomic
+    def save(self, request):
+        user = super().save(request)
+        user.phone_number = self.data.get('phone_number')
+        user.birthday = self.data.get('birthday')
         user.save()
         return user
+
+
+class CustomUserDetailsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = (
+            'pk',
+            'email',
+            'phone_number',
+            'gender',
+        )
+        read_only_fields = ('pk', 'email', 'phone_number',)
