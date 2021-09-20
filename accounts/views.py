@@ -6,56 +6,13 @@ from allauth.socialaccount.providers.kakao import views as kakao_view
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialLoginView
 from django.conf import settings
-from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from rest_framework import status
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser, AllowAny
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
-
-from .models import User
-from .permissions import IsSelf
-from .serializers import UserSerializer
-
 
 BASE_URL = 'https://flavoice.shop/'
 KAKAO_CALLBACK_URI = BASE_URL + 'accounts/kakao/callback/'
-KAKAO_REST_API_KEY = settings.KAKAO_REST_API_KEY
-
-
-class UserViewSet(ModelViewSet):
-
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-
-    def get_permissions(self):
-        permission_classes = []
-        if self.action == "list":
-            permission_classes = [IsAdminUser]
-        elif self.action == "create" or self.action == "retrieve":
-            permission_classes = [AllowAny]
-        # update or partial_update or etc("toggle_favs", )..
-        else:
-            permission_classes = [IsSelf]
-        return [permission() for permission in permission_classes]
-
-    # # POST /users/login
-    # @action(detail=False, methods=["post"])
-    # def login(self, request):
-    #     username = request.data.get("username")
-    #     password = request.data.get("password")
-    #     if not username or not password:
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-    #     user = authenticate(username=username, password=password)
-    #     if user is not None:
-    #         encoded_jwt = jwt.encode(
-    #             {"pk": user.pk}, settings.SECRET_KEY, algorithm="HS256"
-    #         )
-    #         return Response(data={'token': encoded_jwt, "id": user.pk})
-    #     else:
-    #         return Response(status=status.HTTP_401_UNAUTHORIZED)
+REST_API_KEY = settings.KAKAO_REST_API_KEY
 
 
 def kakao_login(request):
@@ -65,14 +22,12 @@ def kakao_login(request):
     그러면 구글 로그인 창이 뜨고, 알맞은 아이디, 비밀번호로 진행하면 Callback URI로 Code값이 들어가게 된다.
     """
 
-    rest_api_key = 'dc9d60c4b4af4bfa3227b496d0d5cb50'
     return redirect(
-        f"https://kauth.kakao.com/oauth/authorize?client_id={KAKAO_REST_API_KEY}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code"
+        f"https://kauth.kakao.com/oauth/authorize?client_id={REST_API_KEY}&redirect_uri={KAKAO_CALLBACK_URI}&response_type=code"
     )
 
 
 def kakao_callback(request):
-    rest_api_key = 'dc9d60c4b4af4bfa3227b496d0d5cb50'
     code = request.GET.get("code")
     redirect_uri = KAKAO_CALLBACK_URI
 
@@ -82,7 +37,7 @@ def kakao_callback(request):
     문제없이 성공하면, access_token을 가져올 수 있다.
     """
     token_req = requests.get(
-        f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={KAKAO_REST_API_KEY}&redirect_uri={redirect_uri}&code={code}")
+        f"https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id={REST_API_KEY}&redirect_uri={redirect_uri}&code={code}")
     token_req_json = token_req.json()
     error = token_req_json.get("error")
     if error is not None:
@@ -128,7 +83,7 @@ def kakao_callback(request):
     """
 
     try:
-        user = User.objects.get(email=email)
+        user = settings.AUTH_USER_MODEL.objects.get(email=email)
         # 기존에 가입된 유저의 Provider가 kakao가 아니면 에러 발생, 맞으면 로그인
         # 다른 SNS로 가입된 유저
         social_user = SocialAccount.objects.get(user=user)
@@ -153,7 +108,7 @@ def kakao_callback(request):
         accept_json.pop('user', None)
         return JsonResponse(accept_json)
 
-    except User.DoesNotExist:
+    except settings.AUTH_USER_MODEL.DoesNotExist:
         # 기존에 가입된 유저가 없으면 새로 가입
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(f"{BASE_URL}accounts/kakao/login/finish/", data=data)
