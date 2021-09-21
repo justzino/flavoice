@@ -94,9 +94,7 @@ ROOT_URLCONF = 'flavoice.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'accounts/templates'),  # Email templates 추가
-        ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -160,8 +158,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',
     ],
 }
 
@@ -185,7 +183,7 @@ ACCOUNT_EMAIL_REQUIRED = True               # 로그인 인증 email 로 사용�
 ACCOUNT_UNIQUE_EMAIL = True
 
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'    # 이메일 유효성 인증 (mandatory, optional, none)
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True     # to activate the email account after the user clicks on the link received in the email
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True         # 유저가 받은 링크를 클릭하면 회원가입 완료
 # ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/?verification=1'
 # ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
 
@@ -199,8 +197,12 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # JWT 설정
+"""
+For every authenticated session, dj-rest-auth would return a Set-Cookie header
+Set-Cookie: jwt-auth=xxxxxxxxxxxxx; expires=Sun, 17 Feb 2021 14:21:00 GMT; HttpOnly; Max-Age=300; Path=/
+"""
 REST_USE_JWT = True
-# JWT_AUTH_COOKIE = 'my-app-auth'     # The cookie key name can be the one you want
+JWT_AUTH_COOKIE = 'jwt-auth'     # The cookie key name can be the one you want
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
