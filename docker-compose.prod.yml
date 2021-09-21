@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: prod.Dockerfile
     image: 516199006501.dkr.ecr.ap-northeast-2.amazonaws.com/flavoice:web
-    command: gunicorn flavoice.wsgi:application --bind 0.0.0.0:8000 --timeout=120
+    command: gunicorn flavoice.wsgi:application --bind 0.0.0.0:8000 --timeout=300
     env_file:
       - envs/.env.prod
     volumes:
