@@ -23,6 +23,7 @@ GENDER_SELECTION = [
 class CustomUser(AbstractUser):
 
     """ User Model Definition """
+
     username = models.CharField(blank=True, null=True, max_length=150)
     email = models.EmailField(_('email address'), unique=True)
     phone_number = models.CharField(verbose_name="휴대폰 번호", max_length=11, blank=True, null=True, validators=[validate_phone_number])
