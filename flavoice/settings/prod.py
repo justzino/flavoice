@@ -1,6 +1,6 @@
 from .base import *  # noqa
 
-DEBUG = env.bool("DEBUG", False)
+DEBUG = True
 env.read_env(os.path.join(BASE_DIR, "envs/.env.prod"))
 
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
@@ -19,6 +19,8 @@ CORS_ORIGIN_ALLOW_ALL = True        # 임시로 다 열어둠
 LOGIN_URL = 'https://flavoice.shop/accounts/login'
 
 # Email backend: SMTP 세팅
+DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
+SERVER_EMAIL = env('EMAIL_HOST_USER')
 EMAIL_BACKEND = env('EMAIL_BACKEND')
 EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
