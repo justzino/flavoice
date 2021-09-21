@@ -13,7 +13,8 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from dj_rest_auth.registration.views import VerifyEmailView, ConfirmEmailView
+from allauth.account.views import confirm_email
+from dj_rest_auth.registration.views import VerifyEmailView
 from django.contrib import admin
 from django.urls import path, include, re_path
 from drf_yasg import openapi
@@ -22,6 +23,25 @@ from rest_framework import permissions
 
 VERSION = 'v1'
 
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path(f'api/{VERSION}/', include("api.urls")),
+
+    # User
+    path('accounts/', include('dj_rest_auth.urls')),  # Login, Logout, password 관련 기능
+    # 이메일 관련 필요
+    # Needs to be defined before the registration path
+    re_path('accounts/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
+    path('accounts/registration/account-confirm-email/', VerifyEmailView.as_view(),
+         name='account_email_verification_sent'),
+    path('accounts/registration/', include('dj_rest_auth.registration.urls')),  # SingUp 기능
+
+    # path('accounts/', include('allauth.urls')),
+    path('accounts/', include('accounts.urls')),
+]
+
+# Swagger DOCS
 schema_view = get_schema_view(
     openapi.Info(
         title="Swagger API",
@@ -34,22 +54,6 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(permissions.AllowAny,),
 )
-
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path(f'api/{VERSION}/', include("api.urls")),
-
-    # User
-    # 이메일 관련 필요
-    path('accounts/account-confirm-email/<str:key>/', ConfirmEmailView.as_view()), # Needs to be defined before the registration path
-    path('accounts/account-confirm-email/', VerifyEmailView.as_view(), name='account_email_verification_sent'),
-    path('accounts/', include('dj_rest_auth.urls')),  # Login, Logout, password 관련 기능
-    path('accounts/', include('dj_rest_auth.registration.urls')),  # SingUp 기능
-
-    # path('accounts/', include('allauth.urls')),
-    path('accounts/', include('accounts.urls')),
-]
 
 urlpatterns += [
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name="schema-json"),
