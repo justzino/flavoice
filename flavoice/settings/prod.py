@@ -1,6 +1,6 @@
 from .base import *  # noqa
 
-DEBUG = False
+DEBUG = True
 env.read_env(os.path.join(BASE_DIR, "envs/.env.prod"))
 
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
