@@ -9,7 +9,6 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from rest_framework import status
-from .models import CustomUser
 
 BASE_URL = 'https://flavoice.shop/'
 KAKAO_CALLBACK_URI = BASE_URL + 'accounts/kakao/callback/'
@@ -84,7 +83,7 @@ def kakao_callback(request):
     """
 
     try:
-        user = CustomUser.objects.get(email=email)
+        user = settings.AUTH_USER_MODEL.objects.get(email=email)
         # 기존에 가입된 유저의 Provider가 kakao가 아니면 에러 발생, 맞으면 로그인
         # 다른 SNS로 가입된 유저
         social_user = SocialAccount.objects.get(user=user)
@@ -109,7 +108,7 @@ def kakao_callback(request):
         accept_json.pop('user', None)
         return JsonResponse(accept_json)
 
-    except CustomUser.DoesNotExist:
+    except settings.AUTH_USER_MODEL.DoesNotExist:
         # 기존에 가입된 유저가 없으면 새로 가입
         data = {'access_token': access_token, 'code': code}
         accept = requests.post(f"{BASE_URL}accounts/kakao/login/finish/", data=data)
