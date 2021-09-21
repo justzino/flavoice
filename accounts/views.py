@@ -9,8 +9,10 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from rest_framework import status
+from accounts.models import CustomUser as User
 
 BASE_URL = 'https://flavoice.shop/'
+# BASE_URL = 'http://localhost:8000/'
 KAKAO_CALLBACK_URI = BASE_URL + 'accounts/kakao/callback/'
 REST_API_KEY = settings.KAKAO_REST_API_KEY
 
@@ -44,7 +46,7 @@ def kakao_callback(request):
         raise JSONDecodeError(error)
     access_token = token_req_json.get("access_token")
 
-    print(f"access_token: {access_token}")
+    # print(f"access_token: {access_token}")
 
     # Email Request
     """
@@ -64,9 +66,9 @@ def kakao_callback(request):
     kakao_account에서 이메일 외에 카카오톡 프로필 이미지, 배경 이미지 url 가져올 수 있음
     print(kakao_account) 로 확인 가능
     """
-    print(f"kakao_account: {kakao_account}")
+    # print(f"kakao_account: {kakao_account}")
     email = kakao_account.get('email')
-    print(f"email: {email}")
+    # print(f"email: {email}")
 
     # Signup or Signin Request
     """
@@ -83,7 +85,7 @@ def kakao_callback(request):
     """
 
     try:
-        user = settings.AUTH_USER_MODEL.objects.get(email=email)
+        user = User.objects.get(email=email)
         # 기존에 가입된 유저의 Provider가 kakao가 아니면 에러 발생, 맞으면 로그인
         # 다른 SNS로 가입된 유저
         social_user = SocialAccount.objects.get(user=user)
@@ -108,9 +110,10 @@ def kakao_callback(request):
         accept_json.pop('user', None)
         return JsonResponse(accept_json)
 
-    except settings.AUTH_USER_MODEL.DoesNotExist:
+    except User.DoesNotExist:
         # 기존에 가입된 유저가 없으면 새로 가입
         data = {'access_token': access_token, 'code': code}
+        # print(data)
         accept = requests.post(f"{BASE_URL}accounts/kakao/login/finish/", data=data)
         accept_status = accept.status_code
 
