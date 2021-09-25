@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Song, Genre, Singer
-from .models import Voice, File
 from .serializers import FileSerializer
+from .models import Voice
 from .serializers import GenreSerializer
 from .serializers import SingerSerializer
 from .serializers import SongSerializer
@@ -14,9 +14,9 @@ class VoiceViewSet(ModelViewSet):
     serializer_class = VoiceSerializer
 
 
-class FileViewSet(ModelViewSet):
-    queryset = File.objects.all()
-    serializer_class = FileSerializer
+# class FileViewSet(ModelViewSet):
+#     queryset = File.objects.all()
+#     serializer_class = FileSerializer
 
 
 class SongViewSet(ModelViewSet):
