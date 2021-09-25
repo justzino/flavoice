@@ -210,11 +210,3 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 }
-
-
-# 베포시 BrowsableAPIRenderer 는 사용 안함
-if not DEBUG:
-    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
-        'rest_framework.renderers.JSONRenderer',
-        # 'rest_framework.renderers.BrowsableAPIRenderer',
-    ]
