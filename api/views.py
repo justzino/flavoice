@@ -45,15 +45,15 @@ class VoiceViewSet(ModelViewSet):
 
 
 class SongViewSet(ModelViewSet):
-    queryset = Song.objects.all()
+    queryset = Song.objects.get_queryset().order_by('max_pitch')
     serializer_class = SongSerializer
 
 
 class GenreViewSet(ModelViewSet):
-    queryset = Genre.objects.all()
+    queryset = Genre.objects.get_queryset().order_by('id')
     serializer_class = GenreSerializer
 
 
 class SingerViewSet(ModelViewSet):
-    queryset = Singer.objects.all()
+    queryset = Singer.objects.get_queryset().order_by('id')
     serializer_class = SingerSerializer
