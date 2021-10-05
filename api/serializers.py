@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Voice, File, Song, Genre, Singer
+from .hz_to_note import convert_to_notes
 
 """
 ### Saving serializer (Create & Update)
@@ -28,8 +29,23 @@ class VoiceSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'user']
 
     def create(self, validated_data):
+        # queryset or instance 외에 context 로 추가정보(request object) 전달
+        max_hz_data = validated_data.pop("max_pitch")
+
+        max_note, min_note = '', ''
+
+        if max_hz_data:
+            max_notes = convert_to_notes(max_hz_data)     # ['C5', 'A4', 'D#5'] 형태
+            # 우선 max 값 하나만 client 에서 보내므로 첫번째 값으로 사용 -> 추후에 여러 값 보내면 변경 필요
+            max_note = max_notes[0]
+
+        if "min_pitch" in validated_data.keys():
+            min_hz_data = validated_data.pop("min_pitch")
+            min_notes = convert_to_notes(min_hz_data)
+            min_note = min_notes[0]
+
         request = self.context.get("request")
-        voice = Voice.objects.create(**validated_data, user=request.user)
+        voice = Voice.objects.create(user=request.user, max_pitch=max_note, min_pitch=min_note)
 
         return voice
 
