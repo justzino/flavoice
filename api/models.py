@@ -16,8 +16,8 @@ class Voice(TimeStampedModel):
     """ Voice Model to analyze and save pitches """
 
     # 목소리 음역대 저장
-    max_pitch = models.IntegerField(default=0)
-    min_pitch = models.IntegerField(blank=True, null=True)
+    max_pitch = models.CharField(max_length=10)
+    min_pitch = models.CharField(max_length=10, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='voices')
 
 
