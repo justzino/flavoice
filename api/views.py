@@ -44,16 +44,56 @@ class VoiceViewSet(ModelViewSet):
 #     serializer_class = FileSerializer
 
 
+# 해당 pitch 보다 작거나 같은 5개 pitch list return
+def find_lower_pitches(pitch: str):
+    pitch_list = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
+    note, octave = '', ''
+    if pitch[1] == '#':
+        note, octave = pitch[:2], int(pitch[2:])     # 'F#', 5
+    else:
+        note, octave = pitch[:1], int(pitch[1:])
+
+    idx = pitch_list.index(note)
+    lower_pitches = []
+    for i in range(5):
+        lower_pitches.append(pitch_list[idx] + str(octave))
+
+        idx -= 1
+        if idx < 0:
+            idx += 12
+            octave -= 1
+    return lower_pitches
+
+
 class SongViewSet(ModelViewSet):
-    queryset = Song.objects.all()
+    queryset = Song.objects.get_queryset().order_by('max_pitch')
     serializer_class = SongSerializer
+
+    def get_permissions(self):
+        # (GET /songs/me/)
+        if self.action == "me":
+            permission_classes = [IsOwner]
+        # (POST /songs/) (DELETE /songs/{id}/) (PUT /songs/{id}/) (PATCH /songs/{id}/)
+        else:
+            permission_classes = [IsAdminUser]
+
+        return [permission() for permission in permission_classes]
+
+    # GET /songs/me/
+    @action(detail=False, methods=["get"])
+    def me(self, request):
+        user_max_pitch = request.user.voices.all()[0].max_pitch
+        lower_pitches = find_lower_pitches(user_max_pitch)
+        songs = Song.objects.filter(max_pitch__in=lower_pitches)
+        serializer = SongSerializer(songs, many=True).data
+        return Response(serializer)
 
 
 class GenreViewSet(ModelViewSet):
-    queryset = Genre.objects.all()
+    queryset = Genre.objects.get_queryset().order_by('id')
     serializer_class = GenreSerializer
 
 
 class SingerViewSet(ModelViewSet):
-    queryset = Singer.objects.all()
+    queryset = Singer.objects.get_queryset().order_by('id')
     serializer_class = SingerSerializer
