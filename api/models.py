@@ -52,7 +52,7 @@ class Genre(TimeStampedModel):
         return self.name
 
 
-class Singer(models.Model):
+class Singer(TimeStampedModel):
     """ Singer Model """
 
     name = models.CharField(max_length=100)
