@@ -69,14 +69,14 @@ class GenreSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Genre
-        fields = '__all__'
+        fields = ['id', 'name']
         read_only_fields = ['id']
 
 
 class SingerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Singer
-        fields = '__all__'
+        fields = ['id', 'name', 'date_of_debut']
         read_only_fields = ['id']
 
 
