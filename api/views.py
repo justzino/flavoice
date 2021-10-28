@@ -1,3 +1,4 @@
+from rest_framework import exceptions
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -34,9 +35,12 @@ class VoiceViewSet(ModelViewSet):
     @action(detail=False, methods=["get"])
     def me(self, request):
         user = request.user
-        voices = Voice.objects.filter(user_id=user.id)
-        serializer = VoiceSerializer(voices, many=True).data
-        return Response(serializer)
+        voices = Voice.objects.filter(user_id=user.id).last()
+        if not voices:
+            raise exceptions.NotFound(detail="Voice 정보가 없습니다.")
+        else:
+            serializer = VoiceSerializer(voices, many=True).data
+            return Response(serializer)
 
 
 # class FileViewSet(ModelViewSet):
@@ -82,11 +86,18 @@ class SongViewSet(ModelViewSet):
     # GET /songs/me/
     @action(detail=False, methods=["get"])
     def me(self, request):
-        user_max_pitch = request.user.voices.all()[0].max_pitch
-        lower_pitches = find_lower_pitches(user_max_pitch)
-        songs = Song.objects.filter(max_pitch__in=lower_pitches)
-        serializer = SongSerializer(songs, many=True).data
-        return Response(serializer)
+        try:
+            user_max_pitch = request.user.voices.last().max_pitch      # 유저와 연결된 voice의 max_pitch
+            lower_pitches = find_lower_pitches(user_max_pitch)
+            songs = Song.objects.filter(max_pitch__in=lower_pitches)
+
+            if not songs:
+                raise exceptions.NotFound(detail="해당 음역대의 노래 정보가 아직 없습니다")
+
+            serializer = SongSerializer(songs, many=True).data
+            return Response(serializer)
+        except AttributeError:  # 유저의 voice 가 없는 경우
+            raise exceptions.NotFound(detail="Voice 정보가 없습니다.")
 
 
 class GenreViewSet(ModelViewSet):
