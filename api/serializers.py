@@ -87,7 +87,7 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
-        fields = ['title', 'max_pitch', 'min_pitch', 'singer', 'genre']
+        fields = ['id', 'title', 'max_pitch', 'min_pitch', 'singer', 'genre', 'explanation']
         read_only_fields = ['id']
 
     # 디폴트 ModelSerializer 의 .create(), .update() 메소드는 writable nested representations을 지원하지 않음
@@ -132,7 +132,7 @@ class SongSerializer(serializers.ModelSerializer):
         if exist_song:
             return exist_song
 
-        # validated_data에는 title, max_pitch, min_pitch 가 남음
+        # validated_data에는 title, max_pitch, min_pitch, explanation 가 남음
         song = Song.objects.create(**validated_data)        # Song 인스턴스 생성
         # Song 인스턴스에 genres, singers 연결
         song.genre.set(genres)

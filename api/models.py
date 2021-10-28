@@ -41,6 +41,7 @@ class Song(TimeStampedModel):
     title = models.CharField(max_length=200, blank=False, null=False)
     max_pitch = models.CharField(max_length=5, blank=False, null=False)  # 음역대
     min_pitch = models.CharField(max_length=5, blank=True, null=True)
+    explanation = models.CharField(max_length=255, blank=True, null=True, default=None)
     singer = models.ManyToManyField('Singer', related_name='songs')
     genre = models.ManyToManyField('Genre', related_name='songs', help_text='Select a genre for this song')
 
