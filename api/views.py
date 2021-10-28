@@ -1,11 +1,12 @@
+from rest_framework import exceptions
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Song, Genre, Singer
 from .models import Voice
-from .permissions import IsOwner
+from .permissions import IsOwner, IsStaff
 from .serializers import GenreSerializer
 from .serializers import SingerSerializer
 from .serializers import SongSerializer
@@ -26,7 +27,7 @@ class VoiceViewSet(ModelViewSet):
         elif self.action == "me" or self.action == "update":
             permission_classes = [IsOwner]
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsStaff]
 
         return [permission() for permission in permission_classes]
 
@@ -34,9 +35,12 @@ class VoiceViewSet(ModelViewSet):
     @action(detail=False, methods=["get"])
     def me(self, request):
         user = request.user
-        voices = Voice.objects.filter(user_id=user.id)
-        serializer = VoiceSerializer(voices, many=True).data
-        return Response(serializer)
+        voices = Voice.objects.filter(user_id=user.id).last()
+        if not voices:
+            raise exceptions.NotFound(detail="Voice 정보가 없습니다.")
+        else:
+            serializer = VoiceSerializer(voices, many=True).data
+            return Response(serializer)
 
 
 # class FileViewSet(ModelViewSet):
@@ -73,27 +77,35 @@ class SongViewSet(ModelViewSet):
         # (GET /songs/me/)
         if self.action == "me":
             permission_classes = [IsOwner]
-        # (POST /songs/) (DELETE /songs/{id}/) (PUT /songs/{id}/) (PATCH /songs/{id}/)
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsStaff]
 
         return [permission() for permission in permission_classes]
 
     # GET /songs/me/
     @action(detail=False, methods=["get"])
     def me(self, request):
-        user_max_pitch = request.user.voices.all()[0].max_pitch
-        lower_pitches = find_lower_pitches(user_max_pitch)
-        songs = Song.objects.filter(max_pitch__in=lower_pitches)
-        serializer = SongSerializer(songs, many=True).data
-        return Response(serializer)
+        try:
+            user_max_pitch = request.user.voices.last().max_pitch      # 유저와 연결된 voice의 max_pitch
+            lower_pitches = find_lower_pitches(user_max_pitch)
+            songs = Song.objects.filter(max_pitch__in=lower_pitches)
+
+            if not songs:
+                raise exceptions.NotFound(detail="해당 음역대의 노래 정보가 아직 없습니다")
+
+            serializer = SongSerializer(songs, many=True).data
+            return Response(serializer)
+        except AttributeError:  # 유저의 voice 가 없는 경우
+            raise exceptions.NotFound(detail="Voice 정보가 없습니다.")
 
 
 class GenreViewSet(ModelViewSet):
     queryset = Genre.objects.get_queryset().order_by('id')
     serializer_class = GenreSerializer
+    permission_classes = [IsStaff]
 
 
 class SingerViewSet(ModelViewSet):
     queryset = Singer.objects.get_queryset().order_by('id')
     serializer_class = SingerSerializer
+    permission_classes = [IsStaff]

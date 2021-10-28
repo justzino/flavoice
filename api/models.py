@@ -20,6 +20,13 @@ class Voice(TimeStampedModel):
     min_pitch = models.CharField(max_length=10, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='voices')
 
+    def save(self, *args, **kwargs):
+        if self.max_pitch:
+            self.max_pitch = self.max_pitch.upper()
+        if self.min_pitch:
+            self.min_pitch = self.min_pitch.upper()
+        return super(Voice, self).save(*args, **kwargs)
+
 
 class File(TimeStampedModel):
     """ File Model to save voice files """
@@ -34,12 +41,20 @@ class Song(TimeStampedModel):
     title = models.CharField(max_length=200, blank=False, null=False)
     max_pitch = models.CharField(max_length=5, blank=False, null=False)  # 음역대
     min_pitch = models.CharField(max_length=5, blank=True, null=True)
+    explanation = models.CharField(max_length=255, blank=True, null=True, default=None)
     singer = models.ManyToManyField('Singer', related_name='songs')
     genre = models.ManyToManyField('Genre', related_name='songs', help_text='Select a genre for this song')
 
     def __str__(self):
         """String for representing the Model object."""
         return self.title
+
+    def save(self, *args, **kwargs):
+        if self.max_pitch:
+            self.max_pitch = self.max_pitch.upper()
+        if self.min_pitch:
+            self.min_pitch = self.min_pitch.upper()
+        return super(Song, self).save(*args, **kwargs)
 
 
 class Genre(TimeStampedModel):
@@ -49,7 +64,12 @@ class Genre(TimeStampedModel):
 
     def __str__(self):
         """String for representing the Model object."""
-        return self.name
+        return str(self.pk) + '.' + self.name
+
+    def save(self, *args, **kwargs):
+        if self.name:
+            self.name = self.name.upper()
+        return super(Genre, self).save(*args, **kwargs)
 
 
 class Singer(TimeStampedModel):
@@ -60,4 +80,4 @@ class Singer(TimeStampedModel):
 
     def __str__(self):
         """String for representing the Model object."""
-        return self.name
+        return str(self.pk) + '.' + self.name
