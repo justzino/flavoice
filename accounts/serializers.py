@@ -17,6 +17,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         user = super().save(request)
         user.phone_number = self.data.get('phone_number')
         user.birthday = self.data.get('birthday')
+        user.gender = self.data.get('gender')
         user.save()
         return user
 

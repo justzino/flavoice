@@ -15,8 +15,8 @@ def validate_phone_number(value):
 
 
 GENDER_SELECTION = [
-    ('M', 'Male'),
-    ('F', 'Female'),
+    ('M', 'M'),
+    ('F', 'F'),
 ]
 
 
