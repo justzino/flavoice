@@ -6,5 +6,23 @@ from . import models
 @admin.register(models.CustomUser)
 class UserAdmin(UserAdmin):
 
-    fieldsets = UserAdmin.fieldsets
-    list_display = UserAdmin.list_display
+    additional_fieldsets = (
+        (
+            "추가 프로필",
+            {
+                "fields": (
+                    "phone_number",
+                    "birthday",
+                    "gender",
+                )
+            },
+        ),
+    )
+    fieldsets = UserAdmin.fieldsets + additional_fieldsets
+    list_display = (
+        "username",
+        "email",
+        "is_active",
+        "is_staff",
+        "is_superuser",
+    )

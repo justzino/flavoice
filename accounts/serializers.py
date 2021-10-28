@@ -17,18 +17,22 @@ class CustomRegisterSerializer(RegisterSerializer):
         user = super().save(request)
         user.phone_number = self.data.get('phone_number')
         user.birthday = self.data.get('birthday')
+        user.gender = self.data.get('gender')
         user.save()
         return user
 
 
 class CustomUserDetailsSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(max_length=11)
+    birthday = serializers.DateField()
+    gender = serializers.ChoiceField(choices=GENDER_SELECTION)
 
     class Meta:
         model = CustomUser
         fields = (
-            'pk',
             'email',
             'phone_number',
             'gender',
+            'birthday',
         )
-        read_only_fields = ('pk', 'email', 'phone_number',)
+        read_only_fields = ('email', 'phone_number',)
