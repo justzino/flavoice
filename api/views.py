@@ -1,12 +1,12 @@
 from rest_framework import exceptions
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Song, Genre, Singer
 from .models import Voice
-from .permissions import IsOwner
+from .permissions import IsOwner, IsStaff
 from .serializers import GenreSerializer
 from .serializers import SingerSerializer
 from .serializers import SongSerializer
@@ -27,7 +27,7 @@ class VoiceViewSet(ModelViewSet):
         elif self.action == "me" or self.action == "update":
             permission_classes = [IsOwner]
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsStaff]
 
         return [permission() for permission in permission_classes]
 
@@ -77,9 +77,8 @@ class SongViewSet(ModelViewSet):
         # (GET /songs/me/)
         if self.action == "me":
             permission_classes = [IsOwner]
-        # (POST /songs/) (DELETE /songs/{id}/) (PUT /songs/{id}/) (PATCH /songs/{id}/)
         else:
-            permission_classes = [IsAdminUser]
+            permission_classes = [IsStaff]
 
         return [permission() for permission in permission_classes]
 
@@ -103,8 +102,10 @@ class SongViewSet(ModelViewSet):
 class GenreViewSet(ModelViewSet):
     queryset = Genre.objects.get_queryset().order_by('id')
     serializer_class = GenreSerializer
+    permission_classes = [IsStaff]
 
 
 class SingerViewSet(ModelViewSet):
     queryset = Singer.objects.get_queryset().order_by('id')
     serializer_class = SingerSerializer
+    permission_classes = [IsStaff]
