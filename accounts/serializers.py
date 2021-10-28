@@ -23,13 +23,16 @@ class CustomRegisterSerializer(RegisterSerializer):
 
 
 class CustomUserDetailsSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(max_length=11)
+    birthday = serializers.DateField()
+    gender = serializers.ChoiceField(choices=GENDER_SELECTION)
 
     class Meta:
         model = CustomUser
         fields = (
-            'pk',
             'email',
             'phone_number',
             'gender',
+            'birthday',
         )
-        read_only_fields = ('pk', 'email', 'phone_number',)
+        read_only_fields = ('email', 'phone_number',)
