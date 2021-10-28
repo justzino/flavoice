@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from .models import Voice, File, Song, Genre, Singer
 from .hz_to_note import convert_to_notes
+from .models import Voice, File, Song, Genre, Singer
 
 """
 ### Saving serializer (Create & Update)
@@ -105,7 +105,10 @@ class SongSerializer(serializers.ModelSerializer):
         for genre_object in genre_data:
             # 해당하는 genre 있으면 그 genre와 연결
             try:
-                exist_genre = all_genres.get(name=genre_object['name'])
+                genre_name = genre_object['name']
+                if genre_name:
+                    genre_name = genre_name.upper()
+                exist_genre = all_genres.get(name=genre_name)
                 genres.append(exist_genre)
             # 없으면 genre 생성
             except Genre.DoesNotExist:
