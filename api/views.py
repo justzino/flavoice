@@ -1,4 +1,4 @@
-from rest_framework import exceptions
+from rest_framework import exceptions, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -81,6 +81,14 @@ class SongViewSet(ModelViewSet):
             permission_classes = [IsStaff]
 
         return [permission() for permission in permission_classes]
+
+    def create(self, request, *args, **kwargs):
+        kwargs["many"] = isinstance(request.data, list)
+        serializer = self.get_serializer(data=request.data, **kwargs)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        print(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     # GET /songs/me/
     @action(detail=False, methods=["get"])
