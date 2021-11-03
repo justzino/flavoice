@@ -5,16 +5,24 @@
   </a>
 </p>
 
-> FLAVOICE
+> [FLAVOICE](https://flavoice.netlify.app/#/guide) - Link
+## API DOCS
+[Swagger API](https://flavoice.shop/swagger/)
 
-## Project Architecture
-![project-flow](./images/project-flow.jpg)
+## Architecture
+![project-flow](./images/backend-flow.jpg)
 
-## CI/CD
-![CI/CD flow](./images/CICD-flow.jpg)
+
+## Repository
+### [Backend](https://github.com/justzino/flavoice)
+### [Crawling](https://github.com/justzino/flavoice-crawling)
+### [Frontend](https://github.com/MoonSangJin/flavoice-front)
 
 ## Team
 
-👤 **B411161 이진호**
-👤 **B611061 문상진**
-👤 **B611019 김남일**
+### Backend + Crawling
+👤 **[justzino](https://github.com/justzino)**  - me
+
+### Frontend
+👤 **[MoonSangJin](https://github.com/MoonSangJin)**  
+👤 **[simyeen](https://github.com/simyeen)**  
