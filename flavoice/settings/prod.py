@@ -1,6 +1,6 @@
 from .base import *  # noqa
 
-DEBUG = True
+DEBUG = False
 env.read_env(os.path.join(BASE_DIR, "envs/.env.prod"))
 
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS")
@@ -16,11 +16,11 @@ THIRD_PARTY_APPS += [
 CORS_ORIGIN_ALLOW_ALL = True        # 임시로 다 열어둠
 
 # 베포시 BrowsableAPIRenderer 는 사용 안함
-if not DEBUG:
-    REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
-        'rest_framework.renderers.JSONRenderer',
-        # 'rest_framework.renderers.BrowsableAPIRenderer',
-    ]
+# if not DEBUG:
+#     REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = [
+#         'rest_framework.renderers.JSONRenderer',
+#         # 'rest_framework.renderers.BrowsableAPIRenderer',
+#     ]
 
 # dj-rest-auth 설정: 회원가입 이후 이동할 URL
 LOGIN_URL = 'https://flavoice.shop/accounts/login'
